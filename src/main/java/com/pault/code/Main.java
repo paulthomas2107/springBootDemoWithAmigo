@@ -43,11 +43,17 @@ public class Main {
 
     @PutMapping("{customerId}")
     public void updateCustomer(@PathVariable("customerId") Integer id, @RequestBody NewCustomerRequest request) {
-        Optional<Customer> customer = customerRepository.findById(id);
-        customer.get().setName(request.name);
-        customer.get().setEmail(request.email);
-        customer.get().setAge(request.age);
-        customerRepository.save(customer.get());
+        try {
+            Customer customer = customerRepository.findById(id).orElseThrow();
+            customer.setName(request.name);
+            customer.setEmail(request.email);
+            customer.setAge(request.age);
+            customerRepository.save(customer);
+        }
+        catch (Exception e) {
+            log.info("Customer not found: " + id);
+        }
+
     }
 
     @DeleteMapping("{customerId}")
