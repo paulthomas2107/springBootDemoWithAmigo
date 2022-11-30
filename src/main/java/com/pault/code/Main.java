@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Log
 @SpringBootApplication
@@ -40,6 +41,15 @@ public class Main {
         customerRepository.save(customer);
     }
 
+    @PutMapping("{customerId}")
+    public void updateCustomer(@PathVariable("customerId") Integer id, @RequestBody NewCustomerRequest request) {
+        Optional<Customer> customer = customerRepository.findById(id);
+        customer.get().setName(request.name);
+        customer.get().setEmail(request.email);
+        customer.get().setAge(request.age);
+        customerRepository.save(customer.get());
+    }
+
     @DeleteMapping("{customerId}")
     public void deleteCustomer(@PathVariable("customerId") Integer id) {
         customerRepository.deleteById(id);
@@ -48,6 +58,8 @@ public class Main {
     public GreetResponse greet() {
         return new GreetResponse("Hi...Paul", List.of("Java", "Python", "C++"), new Person("Rory", 19, -30_000.12));
     }
+
+
 
     record Person(String name, int age, double money) {
     }
